@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Listing Page</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 min-h-screen text-gray-200">
+
+    <!-- Main Container -->
+    <div class="container mx-auto p-4 sm:p-8">
+
+        <!-- Header -->
+        <header class="text-center my-8">
+            <h1 class="text-4xl font-bold text-teal-400">Curated Collection</h1>
+            <p class="mt-2 text-lg text-gray-400">Discover and explore a wide range of products.</p>
+        </header>
+
+        <!-- Main Content Grid -->
+        <main class="grid grid-cols-1 md:grid-cols-4 gap-6">
+
+            <!-- Sidebar for Filters and Sorting -->
+            <aside class="col-span-1 bg-gray-800 p-6 rounded-lg shadow-xl h-fit sticky top-8">
+                <h2 class="text-xl font-semibold text-gray-200 mb-4 border-b border-gray-700 pb-2">Filter & Sort</h2>
+
+                <!-- Sort by Rating -->
+                <div class="mb-6">
+                    <label for="sort-select" class="block text-gray-300 font-medium mb-2">Sort by Rating</label>
+                    <select id="sort-select" class="w-full p-2 border border-gray-600 bg-gray-700 text-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 transition-shadow">
+                        <option value="default">Default</option>
+                        <option value="high-to-low">Highest First</option>
+                        <option value="low-to-high">Lowest First</option>
+                    </select>
+                </div>
+
+                <!-- Filter by Category -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-medium text-gray-300 mb-2">Categories</h3>
+                    <div id="category-filters" class="space-y-2">
+                        <!-- Checkboxes will be dynamically added here -->
+                    </div>
+                </div>
+
+                <!-- Filter by Price Range -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-medium text-gray-300 mb-2">Price Range</h3>
+                    <div class="flex items-center space-x-2">
+                        <input type="range" id="price-range" min="0" max="10000" value="10000" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                        <span id="price-value" class="w-16 text-right text-gray-400 font-medium">₹10000</span>
+                    </div>
+                    <p class="text-sm text-gray-500 mt-1">Adjust to set max price.</p>
+                </div>
+            </aside>
+
+            <!-- Product Cards Container -->
+            <section id="product-list" class="col-span-1 md:col-span-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Product cards will be dynamically added here -->
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Sample Product Data
+        const products = [
+            { id: 1, name: "Stylish Watch", category: "Electronics", price: 6999, rating: 4.8, imageUrl: "https://placehold.co/400x300/1F2937/9CA3AF?text=Watch" },
+            { id: 2, name: "Smart Lamp", category: "Home Appliances", price: 3999, rating: 4.2, imageUrl: "https://placehold.co/400x300/2F3A4B/D1D5DB?text=Lamp" },
+            { id: 3, name: "Leather Backpack", category: "Accessories", price: 5250, rating: 3.5, imageUrl: "https://placehold.co/400x300/374151/D1D5DB?text=Backpack" },
+            { id: 4, name: "Wireless Earbuds", category: "Electronics", price: 6320, rating: 4.9, imageUrl: "https://placehold.co/400x300/1F2937/9CA3AF?text=Earbuds" },
+            { id: 5, name: "Coffee Maker", category: "Home Appliances", price: 7600, rating: 4.1, imageUrl: "https://placehold.co/400x300/2F3A4B/D1D5DB?text=Coffee+Maker" },
+            { id: 6, name: "Running Shoes", category: "Apparel", price: 4460, rating: 4.7, imageUrl: "https://placehold.co/400x300/374151/D1D5DB?text=Shoes" },
+            { id: 7, name: "Digital Camera", category: "Electronics", price: 8000, rating: 4.6, imageUrl: "https://placehold.co/400x300/1F2937/9CA3AF?text=Camera" },
+            { id: 8, name: "Glass Tumbler Set", category: "Home Appliances", price: 2399, rating: 4.3, imageUrl: "https://placehold.co/400x300/2F3A4B/D1D5DB?text=Tumblers" },
+            { id: 9, name: "Formal Shirt", category: "Apparel", price: 2800, rating: 3.9, imageUrl: "https://placehold.co/400x300/374151/D1D5DB?text=Shirt" },
+            { id: 10, name: "Hiking Boots", category: "Apparel", price: 6280, rating: 4.5, imageUrl: "https://placehold.co/400x300/1F2937/9CA3AF?text=Boots" },
+            { id: 11, name: "Georgette Saree", category: "Sarees", price: 6000, rating: 4.9, imageUrl: "https://placehold.co/400x300/374151/D1D5DB?text=Saree" },
+            { id: 12, name: "Cotton Kurti", category: "Kurtis", price: 3600, rating: 4.2, imageUrl: "https://placehold.co/400x300/2F3A4B/D1D5DB?text=Kurti" },
+            { id: 13, name: "High-Performance Laptop", category: "Electronics", price: 7600, rating: 4.7, imageUrl: "https://placehold.co/400x300/1F2937/9CA3AF?text=Laptop" },
+            { id: 14, name: "Silk Blend Saree", category: "Sarees", price: 7920, rating: 4.8, imageUrl: "https://placehold.co/400x300/374151/D1D5DB?text=Saree" },
+            { id: 15, name: "Casual Kurti", category: "Kurtis", price: 3040, rating: 3.9, imageUrl: "https://placehold.co/400x300/2F3A4B/D1D5DB?text=Kurti" },
+            { id: 16, name: "Ultrabook", category: "Electronics", price: 7920, rating: 4.9, imageUrl: "https://placehold.co/400x300/1F2937/9CA3AF?text=Ultrabook" },
+            { id: 17, name: "Best-selling Novel", category: "Books", price: 1200, rating: 4.5, imageUrl: "https://placehold.co/400x300/4B5563/E5E7EB?text=Novel" },
+            { id: 18, name: "Poetry Collection", category: "Books", price: 1800, rating: 4.8, imageUrl: "https://placehold.co/400x300/4B5563/E5E7EB?text=Poetry" },
+            { id: 19, name: "Hydrating Facial Serum", category: "Skincare", price: 4400, rating: 4.9, imageUrl: "https://placehold.co/400x300/4B5563/E5E7EB?text=Serum" },
+            { id: 20, name: "Daily Sunscreen", category: "Skincare", price: 2400, rating: 4.7, imageUrl: "https://placehold.co/400x300/4B5563/E5E7EB?text=Sunscreen" }
+        ];
+
+        // DOM elements
+        const productList = document.getElementById('product-list');
+        const categoryFilters = document.getElementById('category-filters');
+        const priceRangeInput = document.getElementById('price-range');
+        const priceValueSpan = document.getElementById('price-value');
+        const sortSelect = document.getElementById('sort-select');
+
+        // State variables
+        let filteredProducts = [...products];
+        let selectedCategories = [];
+        let maxPrice = 10000;
+
+        /**
+         * Renders the product cards based on the current filtered and sorted list.
+         * @param {Array} productsToRender The array of products to display.
+         */
+        function renderProducts(productsToRender) {
+            productList.innerHTML = '';
+            if (productsToRender.length === 0) {
+                productList.innerHTML = '<div class="col-span-full text-center py-10 text-gray-500">No products match your criteria.</div>';
+                return;
+            }
+
+            productsToRender.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.classList.add('bg-gray-800', 'rounded-lg', 'shadow-md', 'overflow-hidden', 'hover:shadow-lg', 'transform', 'transition-transform', 'duration-300', 'hover:scale-105');
+                
+                // Stars for rating
+                let stars = '';
+                const fullStars = Math.floor(product.rating);
+                const hasHalfStar = product.rating % 1 !== 0;
+                for (let i = 0; i < fullStars; i++) {
+                    stars += '<svg class="w-4 h-4 text-yellow-400 fill-current" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21L16.54 13.97L22 9.24L14.81 8.62L12 2L9.19 8.62L2 9.24L7.46 13.97L5.82 21L12 17.27Z"/></svg>';
+                }
+                if (hasHalfStar) {
+                    stars += '<svg class="w-4 h-4 text-yellow-400 fill-current" viewBox="0 0 24 24"><path d="M12 2L9.19 8.62L2 9.24L7.46 13.97L5.82 21L12 17.27V2Z"/></svg>';
+                }
+                const emptyStars = 5 - Math.ceil(product.rating);
+                for (let i = 0; i < emptyStars; i++) {
+                    stars += '<svg class="w-4 h-4 text-gray-500 fill-current" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21L16.54 13.97L22 9.24L14.81 8.62L12 2L9.19 8.62L2 9.24L7.46 13.97L5.82 21L12 17.27Z"/></svg>';
+                }
+
+                productCard.innerHTML = `
+                    <div class="h-48 overflow-hidden bg-gray-700">
+                        <img src="${product.imageUrl}" alt="${product.name}" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="text-lg font-medium text-gray-200">${product.name}</h3>
+                        <p class="text-gray-400 text-sm mt-1">${product.category}</p>
+                        <div class="flex items-center my-2">
+                            ${stars}
+                            <span class="ml-2 text-gray-400 text-sm">(${product.rating.toFixed(1)})</span>
+                        </div>
+                        <p class="text-xl font-bold text-teal-400 mt-2">₹${product.price.toLocaleString('en-IN')}</p>
+                    </div>
+                `;
+                productList.appendChild(productCard);
+            });
+        }
+
+        /**
+         * Applies filters and sorting to the product list.
+         */
+        function applyFiltersAndSort() {
+            // First, filter by category and price
+            filteredProducts = products.filter(product => {
+                const categoryMatch = selectedCategories.length === 0 || selectedCategories.includes(product.category);
+                const priceMatch = product.price <= maxPrice;
+                return categoryMatch && priceMatch;
+            });
+
+            // Then, sort the filtered products
+            const sortBy = sortSelect.value;
+            if (sortBy === 'high-to-low') {
+                filteredProducts.sort((a, b) => b.rating - a.rating);
+            } else if (sortBy === 'low-to-high') {
+                filteredProducts.sort((a, b) => a.rating - b.rating);
+            } else {
+                // Default sort (by ID)
+                filteredProducts.sort((a, b) => a.id - b.id);
+            }
+            
+            renderProducts(filteredProducts);
+        }
+
+        /**
+         * Initializes the category filter checkboxes.
+         */
+        function initializeCategoryFilters() {
+            const categories = [...new Set(products.map(p => p.category))];
+            categories.forEach(category => {
+                const div = document.createElement('div');
+                div.classList.add('flex', 'items-center');
+                div.innerHTML = `
+                    <input type="checkbox" id="cat-${category}" name="category" value="${category}" class="h-4 w-4 text-teal-600 rounded focus:ring-teal-500 border-gray-600 bg-gray-700">
+                    <label for="cat-${category}" class="ml-2 text-gray-300">${category}</label>
+                `;
+                categoryFilters.appendChild(div);
+
+                div.querySelector('input').addEventListener('change', (e) => {
+                    const categoryValue = e.target.value;
+                    if (e.target.checked) {
+                        selectedCategories.push(categoryValue);
+                    } else {
+                        selectedCategories = selectedCategories.filter(cat => cat !== categoryValue);
+                    }
+                    applyFiltersAndSort();
+                });
+            });
+        }
+
+        // Event Listeners
+        priceRangeInput.addEventListener('input', (e) => {
+            maxPrice = parseInt(e.target.value, 10);
+            priceValueSpan.textContent = `₹${maxPrice.toLocaleString('en-IN')}`;
+            applyFiltersAndSort();
+        });
+
+        sortSelect.addEventListener('change', () => {
+            applyFiltersAndSort();
+        });
+
+        // Initial render
+        initializeCategoryFilters();
+        applyFiltersAndSort();
+    </script>
+</body>
+</html>
